@@ -2,6 +2,8 @@ const btnEl = document.querySelector('#game-board')
 console.log(btnEl)
 const againRl = document.querySelector('#again')
 
+let play = true
+
 const char = ['X', 'O']
 let count = 0
 let board = [['', '', ''],
@@ -23,7 +25,7 @@ var check_pos = (place) => {
 }
 
 var change_val = (place) => {
-    if (check_pos(place)) {
+    if (check_pos(place) && play) {
         place.innerHTML = char[count++ % 2]
         board[Math.floor((place.getAttribute('aria-placeholder')-1)/3)][(place.getAttribute('aria-placeholder')-1) % 3] = char[(count-1) % 2]
     }
@@ -35,6 +37,7 @@ var change_val = (place) => {
             document.querySelector('.show-winner').innerHTML = `<h1>Winner: ${char[(count-1) % 2]} </h1>`
             document.querySelector('.playAgain').style.display='inline'
             count = 0
+            play = false
         }
     }
 
@@ -42,6 +45,7 @@ var change_val = (place) => {
         document.querySelector('.show-winner').innerHTML = `<h1>Draw </h1>`
         document.querySelector('.playAgain').style.display='inline'
         count = 0
+        play = false
     }
 }
 
@@ -75,6 +79,7 @@ againRl.addEventListener('click', ()=> {
     board = [['', '', ''],
             ['', '', ''],
             ['', '', '']]
+    play = true
     board_render(board)
 })
 
