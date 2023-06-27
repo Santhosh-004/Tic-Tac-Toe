@@ -18,6 +18,7 @@ td {
     height: 35px;
     width: 35px;
     cursor: pointer;
+    outline: none;
 }
 
 #game-board {
