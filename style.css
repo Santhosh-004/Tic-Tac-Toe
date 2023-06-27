@@ -1,0 +1,47 @@
+body {
+    background-color: #303841;
+    text-align: center;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: #F6C90E;
+}
+
+table {
+    border-collapse: separate;
+    border-spacing: 5px;
+    table-layout: fixed;
+    width: 60%;
+}
+
+td {
+    border: 3px solid #3A4750;
+    padding: 25px 30px;
+    border-radius: 5px;
+    height: 35px;
+    cursor: pointer;
+}
+
+#game-board {
+    display: flex;
+    justify-content: center;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.playAgain {
+    display: none;
+}
+
+button{
+    padding: 10px 20px;
+    border: 2px solid #EEEEEE;
+    background-color: #303841;
+    color: #F6C90E;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+}
+
+button:active {
+    background-color: #F6C90E;
+    color: #303841;
+}
