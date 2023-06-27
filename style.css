@@ -9,7 +9,6 @@ table {
     border-collapse: separate;
     border-spacing: 5px;
     table-layout: fixed;
-    width: 60%;
 }
 
 td {
@@ -17,6 +16,7 @@ td {
     padding: 25px 30px;
     border-radius: 5px;
     height: 35px;
+    width: 35px;
     cursor: pointer;
 }
 
