@@ -60,7 +60,9 @@ button{
 }
 
 #enterId button {
+    width: 50%;
     margin: 20px 0px;
+
 }
 
 button:active {
