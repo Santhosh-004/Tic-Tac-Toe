@@ -86,15 +86,20 @@ document.querySelector('#sIdBtn').addEventListener('click', async(event) => {
     player = 1
     await create_id(random)
     await show_values(random)
-    while (allData.joined == false) {
-        setTimeout(() => {
-            chk_player(random)
-        }, 1000)
-    }
-    console.log(allData.joined)
-    document.querySelector('#game-board').style.display = 'flex'
-    document.querySelector('#showId').style.display = 'none'
+    
 
+    setInterval(()=>{
+        console.log('checking', allData.joined)
+        chk_player(random)
+    }, 1000)
+
+    if (allData.joined == true) {
+        console.log(allData.joined)
+        document.querySelector('#game-board').style.display = 'flex'
+        document.querySelector('#showId').style.display = 'none'
+    }
+
+    
 })
 
 document.querySelector('#eIdBtn').addEventListener('click', (event) => {
