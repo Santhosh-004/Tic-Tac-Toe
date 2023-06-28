@@ -1,14 +1,95 @@
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getDatabase, ref, set, child, update, remove, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyAFg-6kVCFG6s8TbOFxuxVT5VD2cCCU-a8",
+  authDomain: "tic-tac-toe-70714.firebaseapp.com",
+  projectId: "tic-tac-toe-70714",
+  storageBucket: "tic-tac-toe-70714.appspot.com",
+  messagingSenderId: "145077820985",
+  appId: "1:145077820985:web:6b0c5e27e01ac1aa82f7e8"
+};
+const app = initializeApp(firebaseConfig);
+
+let db = getDatabase(app);
+let random = Math.floor(Math.random()*1000);
+if (random < 100) {
+    random += 100
+}
+
+random = 101
+
 const btnEl = document.querySelector('#game-board')
 console.log(btnEl)
 const againRl = document.querySelector('#again')
 
 let play = true
+let online = false
 
 const char = ['X', 'O']
 let count = 0
 let board = [['', '', ''],
             ['', '', ''],
             ['', '', '']]
+
+let allData
+
+
+async function insert_values(id) {
+    const result = await set(ref(db, `${id}/one`), {
+        count: count,
+        board: board,
+        joined: false
+    })
+}
+
+async function show_values(id) {
+    let dbref = ref(db);
+    const snapshot = await get(child(dbref, `${id}/one`))
+    if (snapshot.exists()) {
+        /* console.log('from cloud', snapshot.val()) */
+        allData = snapshot.val()
+    } else {
+        /* console.log("No data available") */
+        allData = null
+    }
+}
+
+async function update_values(id, joined) {
+    const result = await update(ref(db, `${id}/one`), {
+        count: count,
+        board: board,
+        joined: joined
+    })
+}
+
+document.querySelector('#online').addEventListener('click', (event) => {
+    document.querySelector('#choose').style.display = 'none'
+    document.querySelector('#connection').style.display = 'inline'
+    online = true
+})
+
+document.querySelector('#offline').addEventListener('click', (event) => {
+    document.querySelector('#game-board').style.display = 'flex'
+    document.querySelector('#choose').style.display = 'none'
+})
+
+document.querySelector('#sIdBtn').addEventListener('click', (event) => {
+    document.querySelector('#conBtn').style.display = 'none'
+    document.querySelector('#showId').style.display = 'inline'
+    create_id(random)
+    chk_player(random)
+})
+
+document.querySelector('#eIdBtn').addEventListener('click', (event) => {
+    document.querySelector('#conBtn').style.display = 'none'
+    document.querySelector('#enterId').style.display = 'flex'
+})
+
 
 
 btnEl.addEventListener('click', (event) => {
@@ -17,6 +98,28 @@ btnEl.addEventListener('click', (event) => {
     }
 })
 
+var create_id = async (id) => {
+    console.log('started')
+    document.querySelector('#process').textContent = 'Creating Room...'
+    await insert_values(id)
+    await show_values(id)
+    console.log(allData)
+    document.querySelector('#showHere').textContent += id
+    document.querySelector('#process').textContent = 'Done'
+    document.querySelector('#wait').textContent = 'Waiting for the other player to join...'
+}
+
+var chk_player = async (id) => {
+    show_values(id)
+    if (allData.joined == 2) {
+        document.querySelector('#wait').textContent = 'Entering the game'
+        setTimeout(() => {
+            document.querySelector('#showId').style.display = 'none'
+        }, 1000)
+    }
+    
+}
+
 var check_pos = (place) => {
     if (place.innerHTML === '') {
         return true
@@ -24,12 +127,20 @@ var check_pos = (place) => {
     return false
 }
 
+var render = (board) => {
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            document.querySelector(`[aria-placeholder='${i * 3 + j + 1}']`).innerHTML = board[i][j]
+        }
+    }
+}
+
 var change_val = (place) => {
     if (check_pos(place) && play) {
         place.innerHTML = char[count++ % 2]
         board[Math.floor((place.getAttribute('aria-placeholder')-1)/3)][(place.getAttribute('aria-placeholder')-1) % 3] = char[(count-1) % 2]
     }
-    console.log(board)
+    console.log('local', board)
 
     if (count > 4) {
         console.log(document.querySelector('.playAgain'))

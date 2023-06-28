@@ -5,6 +5,70 @@ body {
     color: #F6C90E;
 }
 
+#connection {
+    display: none;
+}
+
+#conBtn {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+button{
+    margin: 10px auto;
+    width: 40%;
+    padding: 10px 20px;
+    font-size: 20px;
+    font-weight: bold;
+    border: 2px solid #3A4750;
+    background-color: #F6C90E;
+    color: #303841;
+    border-radius: 5px;
+    outline: none;
+}
+
+#id {
+    padding: 10px 20px;
+    width: 50%;
+    border-radius: 30px;
+    border: 3px solid #3A4750;
+    background-color: #303841;
+    color: #F6C90E;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#choose {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#showId {
+    display: none;
+}
+
+#enterId {
+    display: none;
+    justify-content: center;
+    margin: 0px auto;
+    align-items: center;
+    flex-direction: column;
+    width: 40%;
+}
+
+#enterId button {
+    margin: 20px 0px;
+}
+
+button:active {
+    background-color: #303841;
+    color: #F6C90E;
+}
+
+
 table {
     border-collapse: separate;
     border-spacing: 5px;
@@ -21,7 +85,7 @@ td {
 }
 
 #game-board {
-    display: flex;
+    display: none;
     justify-content: center;
     font-size: 30px;
     font-weight: bold;
@@ -31,7 +95,7 @@ td {
     display: none;
 }
 
-button{
+#again{
     padding: 10px 20px;
     border: 2px solid #EEEEEE;
     background-color: #303841;
@@ -40,7 +104,7 @@ button{
     outline: none;
 }
 
-button:active {
+#again:active {
     background-color: #F6C90E;
     color: #303841;
 }

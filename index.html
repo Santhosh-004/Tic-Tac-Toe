@@ -8,6 +8,26 @@
 </head>
 <body>
     <h1>Tic Tac Toe</h1>
+    <div id="choose">
+        <button id="online">ONLINE</button>
+        <button id="offline">OFFLINE</button>
+    </div>
+    <div id="connection">
+        <div id="conBtn">
+            <button id="sIdBtn">Show ID</button>
+            <button id="eIdBtn">Enter ID</button>
+        </div>
+        <div id="showId">
+            <p id="process"></p>
+            <h2 id="showHere">ID : </h2>
+            <p id="wait"></p>
+        </div>
+        <div id="enterId">
+            <h2>Enter ID : </h2>
+            <input type="text" id="id">
+            <button>Play</button>
+        </div>
+    </div>
     <div id="game-board">
         <table>
             <tr>
@@ -32,6 +52,6 @@
     <div class="playAgain">
         <button id="again">Play Again</button>
     </div>
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
