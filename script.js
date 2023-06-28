@@ -93,12 +93,13 @@ document.querySelector('#sIdBtn').addEventListener('click', async(event) => {
         chk_player(random)
     }, 1000)
 
-    if (allData.joined == true) {
-        console.log(allData.joined)
-        clearInterval(interval);
-        document.querySelector('#game-board').style.display = 'flex'
-        document.querySelector('#showId').style.display = 'none'
+    while (allData.joined != true) {
     }
+    console.log(allData.joined)
+    clearInterval(interval);
+    document.querySelector('#game-board').style.display = 'flex'
+    document.querySelector('#showId').style.display = 'none'
+
 })
 
 document.querySelector('#eIdBtn').addEventListener('click', (event) => {
