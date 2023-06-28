@@ -56,11 +56,10 @@ button{
     margin: 0px auto;
     align-items: center;
     flex-direction: column;
-    width: 40%;
 }
 
 #enterId button {
-    width: 50%;
+    width: 30%;
     margin: 20px 0px;
 
 }
