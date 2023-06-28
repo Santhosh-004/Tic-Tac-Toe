@@ -24,12 +24,11 @@ if (random < 100) {
 random = 101
 
 const btnEl = document.querySelector('#game-board')
-console.log(btnEl)
 const againRl = document.querySelector('#again')
 
 let play = true
 let online = false
-
+let player
 const char = ['X', 'O']
 let count = 0
 let board = [['', '', ''],
@@ -60,11 +59,14 @@ async function show_values(id) {
 }
 
 async function update_values(id, joined) {
-    const result = await update(ref(db, `${id}/one`), {
-        count: count,
-        board: board,
-        joined: joined
-    })
+    await show_values(id)
+    if (allData != null) {
+        const result = await update(ref(db, `${id}/one`), {
+            count: count,
+            board: board,
+            joined: joined
+        })
+    }
 }
 
 document.querySelector('#online').addEventListener('click', (event) => {
@@ -78,18 +80,33 @@ document.querySelector('#offline').addEventListener('click', (event) => {
     document.querySelector('#choose').style.display = 'none'
 })
 
-document.querySelector('#sIdBtn').addEventListener('click', (event) => {
+document.querySelector('#sIdBtn').addEventListener('click', async(event) => {
     document.querySelector('#conBtn').style.display = 'none'
     document.querySelector('#showId').style.display = 'inline'
-    create_id(random)
-    chk_player(random)
+    player = 1
+    await create_id(random)
+    await show_values(random)
+    while (allData.joined == false) {
+        setTimeout(() => {
+            chk_player(random)
+        }, 1000)
+    }
+    console.log(allData.joined)
+    document.querySelector('#game-board').style.display = 'flex'
+    document.querySelector('#showId').style.display = 'none'
+
 })
 
 document.querySelector('#eIdBtn').addEventListener('click', (event) => {
     document.querySelector('#conBtn').style.display = 'none'
     document.querySelector('#enterId').style.display = 'flex'
+    player = 2
 })
 
+document.querySelector('#playBtn').addEventListener('click', (event) => {
+    let id = document.querySelector('#id').value
+    join_game(id)
+})
 
 
 btnEl.addEventListener('click', (event) => {
@@ -110,14 +127,28 @@ var create_id = async (id) => {
 }
 
 var chk_player = async (id) => {
-    show_values(id)
-    if (allData.joined == 2) {
+    await show_values(id)
+    if (allData.joined == true) {
         document.querySelector('#wait').textContent = 'Entering the game'
         setTimeout(() => {
             document.querySelector('#showId').style.display = 'none'
         }, 1000)
     }
-    
+}
+
+var join_game = async(id) => {
+    document.querySelector('#join').textContent = 'Joining...'
+    await update_values(id, true)
+    if (allData != null) {
+        setTimeout(() => {
+            document.querySelector('#join').textContent = 'Connected!'
+        }, 1000)
+        document.querySelector('#enterId').style.display = 'none'
+        document.querySelector('#game-board').style.display = 'flex'
+    } else {
+        document.querySelector('#join').textContent = "Room doesn't Exist"
+    }
+
 }
 
 var check_pos = (place) => {
