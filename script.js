@@ -88,18 +88,17 @@ document.querySelector('#sIdBtn').addEventListener('click', async(event) => {
     await show_values(random)
     
 
-    let interval = setInterval(()=>{
+    var loop = setInterval(()=>{
         console.log('checking', allData.joined)
         chk_player(random)
+        if (allData.joined === true) {
+            console.log('here')
+            console.log(allData.joined)
+            clearInterval(loop)
+            document.querySelector('#game-board').style.display = 'flex'
+            document.querySelector('#showId').style.display = 'none'
+        }
     }, 1000)
-
-    while (allData.joined != true) {
-    }
-    console.log(allData.joined)
-    clearInterval(interval);
-    document.querySelector('#game-board').style.display = 'flex'
-    document.querySelector('#showId').style.display = 'none'
-
 })
 
 document.querySelector('#eIdBtn').addEventListener('click', (event) => {
