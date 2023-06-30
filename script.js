@@ -45,7 +45,7 @@ async function insert_values(id) {
         count: count,
         board: board,
         joined: false,
-        play_now: play
+        play_now: true
     })
 }
 
@@ -109,7 +109,7 @@ document.querySelector('#sIdBtn').addEventListener('click', async(event) => {
     var one_loop = setInterval(async()=>{
         await show_values(random)
         render(allData.board)
-        if (allData.play_now == false) {
+        if (allData.play_now == true) {
             play = true
         }
     }, 1000)
@@ -201,7 +201,6 @@ var render = (board) => {
         let row = Math.floor(index / 3)
         let col = index % 3
         element.textContent = board[row][col]
-        console.log(board[row][col])
     });
 }
 
