@@ -213,6 +213,7 @@ var eye_on_two = (id) => {
 }
 
 var change_val = async(place) => {
+    await show_values(random)
     if (check_pos(place) && play && online == false) {
         place.innerHTML = char[count++ % 2]
         board[Math.floor((place.getAttribute('aria-placeholder')-1)/3)][(place.getAttribute('aria-placeholder')-1) % 3] = char[(count-1) % 2]
