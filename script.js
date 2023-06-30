@@ -28,8 +28,9 @@ const againRl = document.querySelector('#again')
 
 let play = true
 let online = false
-let player
+let key, key_c = 0, play_c = 0
 const char = ['X', 'O']
+const bool = [true, false]
 let count = 0
 let board = [['', '', ''],
             ['', '', ''],
@@ -42,7 +43,7 @@ async function insert_values(id) {
     const result = await set(ref(db, `${id}/one`), {
         count: count,
         board: board,
-        joined: false
+        joined: false,
     })
 }
 
@@ -58,13 +59,13 @@ async function show_values(id) {
     }
 }
 
-async function update_values(id, joined) {
+async function update_values(id, tjoined) {
     await show_values(id)
     if (allData != null) {
         const result = await update(ref(db, `${id}/one`), {
             count: count,
             board: board,
-            joined: joined
+            joined: tjoined,
         })
     }
 }
@@ -83,10 +84,11 @@ document.querySelector('#offline').addEventListener('click', (event) => {
 document.querySelector('#sIdBtn').addEventListener('click', async(event) => {
     document.querySelector('#conBtn').style.display = 'none'
     document.querySelector('#showId').style.display = 'inline'
-    player = 1
+    play = bool[play_c%2]
     await create_id(random)
     await show_values(random)
-    
+    key = char[key_c%2]
+    console.log(play, key)
 
     var loop = setInterval(()=>{
         console.log('checking', allData.joined)
@@ -98,25 +100,38 @@ document.querySelector('#sIdBtn').addEventListener('click', async(event) => {
             document.querySelector('#game-board').style.display = 'flex'
             document.querySelector('#showId').style.display = 'none'
         }
-    }, 1000)
+    }, 1000)   
+    
+    sep_thread(random)
+
 })
 
 document.querySelector('#eIdBtn').addEventListener('click', (event) => {
     document.querySelector('#conBtn').style.display = 'none'
     document.querySelector('#enterId').style.display = 'flex'
-    player = 2
+    play = bool[++play_c%2]
+    key = char[++key_c%2]
+    console.log(play, key)
 })
 
-document.querySelector('#playBtn').addEventListener('click', (event) => {
+document.querySelector('#playBtn').addEventListener('click', async(event) => {
     let id = document.querySelector('#id').value
     join_game(id)
+    await show_values(id)
+    setInterval(async()=>{
+        console.log('loop2', play, allData)
+        await show_values(random)
+        render(allData.board)
+    }, 1000)
 })
 
 
-btnEl.addEventListener('click', (event) => {
+btnEl.addEventListener('click', async (event) => {
+    
     if (event.target.classList.contains('b-btn')) {
-        change_val(event.target)
+        await change_val(event.target)
     }
+    
 })
 
 var create_id = async (id) => {
@@ -128,6 +143,15 @@ var create_id = async (id) => {
     document.querySelector('#showHere').textContent += id
     document.querySelector('#process').textContent = 'Done'
     document.querySelector('#wait').textContent = 'Waiting for the other player to join...'
+}
+
+
+var sep_thread = (id) => {
+    setInterval(()=>{
+        show_values(id)
+        render(board)
+    }, 1000)
+    
 }
 
 var chk_player = async (id) => {
@@ -163,18 +187,39 @@ var check_pos = (place) => {
 }
 
 var render = (board) => {
-    for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; j++) {
-            document.querySelector(`[aria-placeholder='${i * 3 + j + 1}']`).innerHTML = board[i][j]
-        }
-    }
+    const cells = document.querySelectorAll('.b-btn')
+    console.log('came to render', board)
+    cells.forEach((element, index) => {
+        let row = Math.floor(index / 3)
+        let col = index % 3
+        element.textContent = board[row][col]
+        console.log(board[row][col])
+    });
 }
 
-var change_val = (place) => {
-    if (check_pos(place) && play) {
+var change_val = async(place) => {
+    if (check_pos(place) && play && online == false) {
         place.innerHTML = char[count++ % 2]
         board[Math.floor((place.getAttribute('aria-placeholder')-1)/3)][(place.getAttribute('aria-placeholder')-1) % 3] = char[(count-1) % 2]
+    } else if (check_pos(place) && play && online) {
+        place.innerHTML = key
+        board[Math.floor((place.getAttribute('aria-placeholder')-1)/3)][(place.getAttribute('aria-placeholder')-1) % 3] = key
+        play = bool[++play_c%2]
+        count++
+        console.log('before update', allData)
+        await update_values(random, true)
+        var loop1 = setInterval(async()=>{
+            console.log('loop1', allData)
+            await show_values(random)
+        },1000)
+        console.log('after update', allData)
+
+        if (allData.count%2 == 1) {
+            play = bool[++play_c%2]
+            console.log('play is', play)
+        }
     }
+
     console.log('local', board)
 
     if (count > 4) {
@@ -230,13 +275,7 @@ againRl.addEventListener('click', ()=> {
 })
 
 function board_render(board) {
-    const cells = document.querySelectorAll('.b-btn')
-
-    cells.forEach((element, index) => {
-        let row = Math.floor(index / 3)
-        let col = index % 3
-        element.textContent = board[row][col] 
-    });
+    render(board)
     document.querySelector('.show-winner').innerHTML = ''
     document.querySelector('.playAgain').style.display = 'none'
 }
