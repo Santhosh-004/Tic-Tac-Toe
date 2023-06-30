@@ -29,6 +29,7 @@ const againRl = document.querySelector('#again')
 let play = true
 let online = false
 let key, key_c = 0, play_c = 0
+let player
 const char = ['X', 'O']
 const bool = [true, false]
 let count = 0
@@ -44,6 +45,7 @@ async function insert_values(id) {
         count: count,
         board: board,
         joined: false,
+        play_now: play
     })
 }
 
@@ -66,6 +68,7 @@ async function update_values(id, tjoined) {
             count: count,
             board: board,
             joined: tjoined,
+            play_now: play
         })
     }
 }
@@ -84,7 +87,8 @@ document.querySelector('#offline').addEventListener('click', (event) => {
 document.querySelector('#sIdBtn').addEventListener('click', async(event) => {
     document.querySelector('#conBtn').style.display = 'none'
     document.querySelector('#showId').style.display = 'inline'
-    play = bool[play_c%2]
+    player = 0
+    play = true
     await create_id(random)
     await show_values(random)
     key = char[key_c%2]
@@ -102,14 +106,21 @@ document.querySelector('#sIdBtn').addEventListener('click', async(event) => {
         }
     }, 1000)   
     
-    sep_thread(random)
+    var one_loop = setInterval(async()=>{
+        await show_values(random)
+        render(allData.board)
+        if (allData.play_now == false) {
+            play = true
+        }
+    }, 1000)
 
 })
 
 document.querySelector('#eIdBtn').addEventListener('click', (event) => {
     document.querySelector('#conBtn').style.display = 'none'
     document.querySelector('#enterId').style.display = 'flex'
-    play = bool[++play_c%2]
+    player = 1
+    play = false
     key = char[++key_c%2]
     console.log(play, key)
 })
@@ -122,14 +133,17 @@ document.querySelector('#playBtn').addEventListener('click', async(event) => {
         console.log('loop2', play, allData)
         await show_values(random)
         render(allData.board)
+        if (allData.play_now == false) {
+            play = true
+        }
     }, 1000)
 })
 
 
-btnEl.addEventListener('click', async (event) => {
+btnEl.addEventListener('click', (event) => {
     
     if (event.target.classList.contains('b-btn')) {
-        await change_val(event.target)
+        change_val(event.target)
     }
     
 })
@@ -146,13 +160,6 @@ var create_id = async (id) => {
 }
 
 
-var sep_thread = (id) => {
-    setInterval(()=>{
-        show_values(id)
-        render(board)
-    }, 1000)
-    
-}
 
 var chk_player = async (id) => {
     await show_values(id)
@@ -197,6 +204,14 @@ var render = (board) => {
     });
 }
 
+var eye_on_two = (id) => {
+    if (player == 2) {
+        setTimeout(() => {
+            
+        })
+    }
+}
+
 var change_val = async(place) => {
     if (check_pos(place) && play && online == false) {
         place.innerHTML = char[count++ % 2]
@@ -204,23 +219,13 @@ var change_val = async(place) => {
     } else if (check_pos(place) && play && online) {
         place.innerHTML = key
         board[Math.floor((place.getAttribute('aria-placeholder')-1)/3)][(place.getAttribute('aria-placeholder')-1) % 3] = key
-        play = bool[++play_c%2]
+        play = false
         count++
         console.log('before update', allData)
         await update_values(random, true)
-        var loop1 = setInterval(async()=>{
-            console.log('loop1', allData)
-            await show_values(random)
-        },1000)
         console.log('after update', allData)
 
-        if (allData.count%2 == 1) {
-            play = bool[++play_c%2]
-            console.log('play is', play)
-        }
     }
-
-    console.log('local', board)
 
     if (count > 4) {
         console.log(document.querySelector('.playAgain'))
