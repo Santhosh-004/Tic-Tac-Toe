@@ -140,8 +140,9 @@ document.querySelector('#playBtn').addEventListener('click', async(event) => {
 })
 
 
-btnEl.addEventListener('click', (event) => {
-    
+btnEl.addEventListener('click', async(event) => {
+    await show_values(random)
+    render(allData.board)
     if (event.target.classList.contains('b-btn')) {
         change_val(event.target)
     }
@@ -214,6 +215,7 @@ var eye_on_two = (id) => {
 
 var change_val = async(place) => {
     await show_values(random)
+    board = allData.board
     if (check_pos(place) && play && online == false) {
         place.innerHTML = char[count++ % 2]
         board[Math.floor((place.getAttribute('aria-placeholder')-1)/3)][(place.getAttribute('aria-placeholder')-1) % 3] = char[(count-1) % 2]
