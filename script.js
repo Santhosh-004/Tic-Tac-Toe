@@ -55,20 +55,21 @@ async function show_values(id) {
     if (snapshot.exists()) {
         /* console.log('from cloud', snapshot.val()) */
         allData = snapshot.val()
+        count = snapshot.val().count
     } else {
         /* console.log("No data available") */
         allData = null
     }
 }
 
-async function update_values(id, tjoined) {
+async function update_values(id, tboard, tcount, tjoined, tplay) {
     await show_values(id)
     if (allData != null) {
         const result = await update(ref(db, `${id}/one`), {
-            count: count,
-            board: board,
+            count: tcount,
+            board: tboard,
             joined: tjoined,
-            play_now: play
+            play_now: tplay
         })
     }
 }
@@ -106,12 +107,21 @@ document.querySelector('#sIdBtn').addEventListener('click', async(event) => {
         }
     }, 1000)   
     
-    var one_loop = setInterval(async()=>{
+    setInterval(async()=>{
         await show_values(random)
-        render(allData.board)
-        if (allData.play_now == true) {
+        
+        console.log('player 0', play)
+        //console.log(allData)
+
+        if (play == false) {
+            render(allData.board)
+        }
+
+        if (allData.play_now == true && allData.count > 0) {
             play = true
         }
+        
+        winner(allData.board)
     }, 1000)
 
 })
@@ -129,13 +139,22 @@ document.querySelector('#playBtn').addEventListener('click', async(event) => {
     let id = document.querySelector('#id').value
     join_game(id)
     await show_values(id)
+    random = id
     setInterval(async()=>{
-        console.log('loop2', play, allData)
-        await show_values(random)
-        render(allData.board)
-        if (allData.play_now == false) {
+        //console.log('loop2', play, allData)
+        await show_values(id)
+
+        if (play == false) {
+            render(allData.board)
+        }
+
+        if (allData.play_now == false && allData.count > 0) {
+            //console.log('condition success')
             play = true
         }
+
+        console.log('player 1', play)
+        winner(allData.board)
     }, 1000)
 })
 
@@ -173,7 +192,7 @@ var chk_player = async (id) => {
 
 var join_game = async(id) => {
     document.querySelector('#join').textContent = 'Joining...'
-    await update_values(id, true)
+    await update_values(id, board, count, true, true)
     if (allData != null) {
         setTimeout(() => {
             document.querySelector('#join').textContent = 'Connected!'
@@ -193,23 +212,15 @@ var check_pos = (place) => {
     return false
 }
 
-var render = (board) => {
+var render = (gboard) => {
     const cells = document.querySelectorAll('.b-btn')
-    console.log('came to render', board)
     cells.forEach((element, index) => {
         let row = Math.floor(index / 3)
         let col = index % 3
-        element.textContent = board[row][col]
+        element.textContent = gboard[row][col]
     });
 }
 
-var eye_on_two = (id) => {
-    if (player == 2) {
-        setTimeout(() => {
-            
-        })
-    }
-}
 
 var change_val = async(place) => {
     
@@ -217,23 +228,30 @@ var change_val = async(place) => {
         place.innerHTML = char[count++ % 2]
         board[Math.floor((place.getAttribute('aria-placeholder')-1)/3)][(place.getAttribute('aria-placeholder')-1) % 3] = char[(count-1) % 2]
     } else if (check_pos(place) && play && online) {
+        
+        place.innerHTML = key
         await show_values(random)
         board = allData.board
-        count = allData.count
-        place.innerHTML = key
         board[Math.floor((place.getAttribute('aria-placeholder')-1)/3)][(place.getAttribute('aria-placeholder')-1) % 3] = key
+        console.log('board here', board)
         count++
-        play = bool[count%2]
-        console.log('before update', allData)
-        await update_values(random, true)
-        console.log('after update', allData)
-
+        //console.log('before update', allData, 'play here', play)
+        await update_values(random, board, count, true, bool[count%2])
+        //await show_values(random)
+        //render(board)
+        console.log('board', board, 'count', count)
+        //console.log('after update', allData)
+        play = false
+        winner(board)
     }
 
+}
+
+var winner = (board) => {
     if (count > 4) {
-        console.log(document.querySelector('.playAgain'))
+        console.log('count', count)
         if (check_win(board)) {
-            document.querySelector('.show-winner').innerHTML = `<h1>Winner: ${char[(count-1) % 2]} </h1>`
+            document.querySelector('.show-winner').innerHTML = `<h1>Winner: ${check_win(board)} </h1>`
             document.querySelector('.playAgain').style.display='inline'
             count = 0
             play = false
@@ -252,33 +270,35 @@ var check_win = (board) => {
     for (let i = 0; i < 3; i++) {
         if (board[i][0] === board[i][1] && board[i][1] === board[i][2] && board[i][0] !== '') {
             console.log('here')
-            return true
+            return board[i][0]
         }
     }
     for (let i = 0; i < 3; i++) {
         if (board[0][i] === board[1][i] && board[1][i] === board[2][i] && board[0][i] !== '') {
             console.log('here2')
-            return true
+            return board[0][i]
         }
     }
     if (board[0][0] === board[1][1] && board[1][1] === board[2][2] && board[0][0] !== '') {
         console.log('here3')
-        return true
+        return board[0][0]
     }
     if (board[0][2] === board[1][1] && board[1][1] === board[2][0] && board[0][2] !== '') {
         console.log('here4')
         console.log(board[0][0])
         console.log('see here', board[0][2], board[1][1], board[2][0])
-        return true
+        return board[0][2]
     }
     return false
 }
 
-againRl.addEventListener('click', ()=> {
+againRl.addEventListener('click', async()=> {
     board = [['', '', ''],
             ['', '', ''],
             ['', '', '']]
-    play = true
+    count = 0
+    await update_values(random, board, count, true, true)
+    
     board_render(board)
 })
 
