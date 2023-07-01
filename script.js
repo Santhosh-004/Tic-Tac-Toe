@@ -120,6 +120,11 @@ document.querySelector('#sIdBtn').addEventListener('click', async(event) => {
         if (allData.play_now == true && allData.count > 0) {
             play = true
         }
+
+        if (count == 0) {
+            document.querySelector('.show-winner').innerHTML = ''
+            document.querySelector('.playAgain').style.display = 'none'
+        }
         
         winner(allData.board)
     }, 1000)
@@ -151,6 +156,11 @@ document.querySelector('#playBtn').addEventListener('click', async(event) => {
         if (allData.play_now == false && allData.count > 0) {
             //console.log('condition success')
             play = true
+        }
+
+        if (count == 0) {
+            document.querySelector('.show-winner').innerHTML = ''
+            document.querySelector('.playAgain').style.display = 'none'
         }
 
         console.log('player 1', play)
@@ -298,7 +308,6 @@ againRl.addEventListener('click', async()=> {
             ['', '', '']]
     count = 0
     await update_values(random, board, count, true, true)
-    
     board_render(board)
 })
 
