@@ -28,7 +28,7 @@ const againRl = document.querySelector('#again')
 
 let play = true
 let online = false
-let key, key_c = 0, play_c = 0
+let key, key_c = 0, play_c = 1, again = 1
 let player
 const char = ['X', 'O']
 const bool = [true, false]
@@ -45,7 +45,8 @@ async function insert_values(id) {
         count: count,
         board: board,
         joined: false,
-        play_now: true
+        play_now: true,
+        repeat: 0
     })
 }
 
@@ -62,14 +63,15 @@ async function show_values(id) {
     }
 }
 
-async function update_values(id, tboard, tcount, tjoined, tplay) {
+async function update_values(id, tboard, tcount, tjoined, tplay, trepeat) {
     await show_values(id)
     if (allData != null) {
         const result = await update(ref(db, `${id}/one`), {
             count: tcount,
             board: tboard,
             joined: tjoined,
-            play_now: tplay
+            play_now: tplay,
+            repeat: trepeat
         })
     }
 }
@@ -117,7 +119,7 @@ document.querySelector('#sIdBtn').addEventListener('click', async(event) => {
             render(allData.board)
         }
 
-        if (allData.play_now == true && allData.count > 0) {
+        if (allData.play_now == true) {
             play = true
         }
 
@@ -153,7 +155,7 @@ document.querySelector('#playBtn').addEventListener('click', async(event) => {
             render(allData.board)
         }
 
-        if (allData.play_now == false && allData.count > 0) {
+        if (allData.play_now == false) {
             //console.log('condition success')
             play = true
         }
@@ -202,7 +204,7 @@ var chk_player = async (id) => {
 
 var join_game = async(id) => {
     document.querySelector('#join').textContent = 'Joining...'
-    await update_values(id, board, count, true, true)
+    await update_values(id, board, count, true, true, 0)
     if (allData != null) {
         setTimeout(() => {
             document.querySelector('#join').textContent = 'Connected!'
@@ -243,22 +245,23 @@ var change_val = async(place) => {
         await show_values(random)
         board = allData.board
         board[Math.floor((place.getAttribute('aria-placeholder')-1)/3)][(place.getAttribute('aria-placeholder')-1) % 3] = key
-        console.log('board here', board)
+        //console.log('board here', board)
         count++
+        console.log('all data', allData)
         //console.log('before update', allData, 'play here', play)
-        await update_values(random, board, count, true, bool[count%2])
+        await update_values(random, board, count, true, bool[count%2], 0)
         //await show_values(random)
         //render(board)
-        console.log('board', board, 'count', count)
+        //console.log('board', board, 'count', count)
         //console.log('after update', allData)
         play = false
-        winner(board)
+        
     }
-
+    winner(board)
 }
 
 var winner = (board) => {
-    if (count > 4) {
+    if (count > 3) {
         console.log('count', count)
         if (check_win(board)) {
             document.querySelector('.show-winner').innerHTML = `<h1>Winner: ${check_win(board)} </h1>`
@@ -306,8 +309,9 @@ againRl.addEventListener('click', async()=> {
     board = [['', '', ''],
             ['', '', ''],
             ['', '', '']]
-    count = 0
-    await update_values(random, board, count, true, true)
+    await show_values(random)
+    count = allData.repeat + 1
+    await update_values(random, board, count, true, bool[again++%2], count)
     board_render(board)
 })
 
