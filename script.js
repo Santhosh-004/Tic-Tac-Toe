@@ -239,6 +239,7 @@ var change_val = async(place) => {
     if (check_pos(place) && play && online == false) {
         place.innerHTML = char[count++ % 2]
         board[Math.floor((place.getAttribute('aria-placeholder')-1)/3)][(place.getAttribute('aria-placeholder')-1) % 3] = char[(count-1) % 2]
+        console.log('count', count)
     } else if (check_pos(place) && play && online) {
         
         place.innerHTML = key
@@ -247,13 +248,13 @@ var change_val = async(place) => {
         board[Math.floor((place.getAttribute('aria-placeholder')-1)/3)][(place.getAttribute('aria-placeholder')-1) % 3] = key
         //console.log('board here', board)
         count++
-        console.log('all data', allData)
+        console.log('all data', allData, 'count', count)
         //console.log('before update', allData, 'play here', play)
         await update_values(random, board, count, true, bool[count%2], 0)
-        //await show_values(random)
+        await show_values(random)
         //render(board)
         //console.log('board', board, 'count', count)
-        //console.log('after update', allData)
+        console.log('after update', allData)
         play = false
         
     }
@@ -262,7 +263,6 @@ var change_val = async(place) => {
 
 var winner = (board) => {
     if (count > 3) {
-        console.log('count', count)
         if (check_win(board)) {
             document.querySelector('.show-winner').innerHTML = `<h1>Winner: ${check_win(board)} </h1>`
             document.querySelector('.playAgain').style.display='inline'
@@ -309,10 +309,24 @@ againRl.addEventListener('click', async()=> {
     board = [['', '', ''],
             ['', '', ''],
             ['', '', '']]
-    await show_values(random)
-    count = allData.repeat + 1
-    await update_values(random, board, count, true, bool[again++%2], count)
+    
+
+    if (online) {
+        await show_values(random)
+        if (player == 0) {
+            count = allData.repeat + 1
+            await update_values(random, board, count, true, bool[again++%2], count)
+        }
+        await show_values(random)
+        console.log('alldata in again ', allData)
+    } else {
+        count += ++key_c
+        play = true
+    }
+
     board_render(board)
+
+
 })
 
 function board_render(board) {
