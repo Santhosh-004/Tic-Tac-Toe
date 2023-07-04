@@ -21,7 +21,6 @@ if (random < 100) {
     random += 100
 }
 
-random = 101
 
 const btnEl = document.querySelector('#game-board')
 const againRl = document.querySelector('#again')
