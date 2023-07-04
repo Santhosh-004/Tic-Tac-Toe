@@ -165,7 +165,7 @@ document.querySelector('#playBtn').addEventListener('click', async(event) => {
             document.querySelector('.playAgain').style.display = 'none'
         }
 
-        console.log('player 1', play)
+        //console.log('player 1', play)
         winner(allData.board)
     }, 1000)
 })
@@ -239,7 +239,7 @@ var change_val = async(place) => {
     if (check_pos(place) && play && online == false) {
         place.innerHTML = char[count++ % 2]
         board[Math.floor((place.getAttribute('aria-placeholder')-1)/3)][(place.getAttribute('aria-placeholder')-1) % 3] = char[(count-1) % 2]
-        console.log('count', count)
+        //console.log('count', count)
     } else if (check_pos(place) && play && online) {
         
         place.innerHTML = key
@@ -248,13 +248,13 @@ var change_val = async(place) => {
         board[Math.floor((place.getAttribute('aria-placeholder')-1)/3)][(place.getAttribute('aria-placeholder')-1) % 3] = key
         //console.log('board here', board)
         count++
-        console.log('all data', allData, 'count', count)
+        //console.log('all data', allData, 'count', count)
         //console.log('before update', allData, 'play here', play)
-        await update_values(random, board, count, true, bool[count%2], 0)
-        await show_values(random)
+        await update_values(random, board, count, true, bool[count%2], allData.repeat)
+        //await show_values(random)
         //render(board)
         //console.log('board', board, 'count', count)
-        console.log('after update', allData)
+        //console.log('after update', allData)
         play = false
         
     }
@@ -318,7 +318,7 @@ againRl.addEventListener('click', async()=> {
             await update_values(random, board, count, true, bool[again++%2], count)
         }
         await show_values(random)
-        console.log('alldata in again ', allData)
+        //console.log('alldata in again ', allData)
     } else {
         count += ++key_c
         play = true
