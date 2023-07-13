@@ -26,7 +26,7 @@ const btnEl = document.querySelector('#game-board')
 const againRl = document.querySelector('#again')
 
 let play = true
-let drawc = 9
+let drawc = 9, done = false
 let online = false
 let key, key_c = 0, play_c = 1, again = 1
 let player
@@ -95,19 +95,19 @@ document.querySelector('#sIdBtn').addEventListener('click', async(event) => {
     await create_id(random)
     await show_values(random)
     key = char[key_c%2]
-    console.log(play, key)
+    //console.log(play, key)
 
     var loop = setInterval(()=>{
-        console.log('checking', allData.joined)
+        //console.log('checking', allData.joined)
         chk_player(random)
         if (allData.joined === true) {
-            console.log('here')
-            console.log(allData.joined)
+            //console.log('here')
+            //console.log(allData.joined)
             clearInterval(loop)
             document.querySelector('#game-board').style.display = 'flex'
             document.querySelector('#showId').style.display = 'none'
         }
-    }, 1000)   
+    }, 500)   
     
     setInterval(async()=>{
         await show_values(random)
@@ -129,7 +129,7 @@ document.querySelector('#sIdBtn').addEventListener('click', async(event) => {
         }
         
         winner(allData.board)
-    }, 1000)
+    }, 500)
 
 })
 
@@ -160,14 +160,16 @@ document.querySelector('#playBtn').addEventListener('click', async(event) => {
             play = true
         }
 
-        if (count == 0) {
+        if (count == drawc-9) {
             document.querySelector('.show-winner').innerHTML = ''
             document.querySelector('.playAgain').style.display = 'none'
+            render(allData.board)
+            done = false
         }
 
-        //console.log('player 1', play)
+        console.log('count', count, 'drawc', drawc, 'play', play)
         winner(allData.board)
-    }, 1000)
+    }, 500)
 })
 
 
@@ -198,7 +200,7 @@ var chk_player = async (id) => {
         document.querySelector('#wait').textContent = 'Entering the game'
         setTimeout(() => {
             document.querySelector('#showId').style.display = 'none'
-        }, 1000)
+        }, 500)
     }
 }
 
@@ -208,7 +210,7 @@ var join_game = async(id) => {
     if (allData != null) {
         setTimeout(() => {
             document.querySelector('#join').textContent = 'Connected!'
-        }, 1000)
+        }, 500)
         document.querySelector('#enterId').style.display = 'none'
         document.querySelector('#game-board').style.display = 'flex'
     } else {
@@ -261,21 +263,38 @@ var change_val = async(place) => {
     winner(board)
 }
 
-var winner = (board) => {
+var winner = async(board) => {
     if (count > drawc-6) {
         if (check_win(board)) {
             document.querySelector('.show-winner').innerHTML = `<h1>Winner: ${check_win(board)} </h1>`
-            document.querySelector('.playAgain').style.display='inline'
+            if (player == 0) {
+                document.querySelector('.playAgain').style.display='inline'
+            }
             count = 0
             play = false
+            if (!done) {
+                drawc += 1
+                done = true
+            }
+            console.log('here')
+            /* if (player == 1) {
+                await update_values(random, board, count, false, bool[again%2], count)
+            } */
+            
         }
     }
     //console.log('drawc', drawc, 'count', count)
     if (count == drawc) {
         document.querySelector('.show-winner').innerHTML = `<h1>Draw </h1>`
-        document.querySelector('.playAgain').style.display='inline'
+        if (player == 0) {
+            document.querySelector('.playAgain').style.display='inline'
+        }
         count = 0
         play = false
+        if (!done) {
+            drawc += 1
+            done = true
+        }
     }
 }
 
@@ -303,26 +322,24 @@ againRl.addEventListener('click', async()=> {
     board = [['', '', ''],
             ['', '', ''],
             ['', '', '']]
-    
-
     if (online) {
-        await show_values(random)
+        
         if (player == 0) {
+            await show_values(random)
             count = allData.repeat + 1
             await update_values(random, board, count, true, bool[again++%2], count)
         }
+        
         await show_values(random)
-        drawc += 1
+        
         //console.log('drawc', drawc, 'count', count)
         //console.log('alldata in again ', allData)
     } else {
         count += ++key_c
         play = true
-        drawc += 1
     }
-
+    done = false
     board_render(board)
-
 
 })
 
