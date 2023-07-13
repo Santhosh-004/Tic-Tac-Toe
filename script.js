@@ -112,7 +112,7 @@ document.querySelector('#sIdBtn').addEventListener('click', async(event) => {
     setInterval(async()=>{
         await show_values(random)
         
-        console.log('player 0', play)
+        //console.log('player 0', play)
         //console.log(allData)
 
         if (play == false) {
@@ -180,11 +180,11 @@ btnEl.addEventListener('click', async(event) => {
 })
 
 var create_id = async (id) => {
-    console.log('started')
+    //console.log('started')
     document.querySelector('#process').textContent = 'Creating Room...'
     await insert_values(id)
     await show_values(id)
-    console.log(allData)
+    //console.log(allData)
     document.querySelector('#showHere').textContent += id
     document.querySelector('#process').textContent = 'Done'
     document.querySelector('#wait').textContent = 'Waiting for the other player to join...'
@@ -262,7 +262,7 @@ var change_val = async(place) => {
 }
 
 var winner = (board) => {
-    if (count > drawc) {
+    if (count > drawc-6) {
         if (check_win(board)) {
             document.querySelector('.show-winner').innerHTML = `<h1>Winner: ${check_win(board)} </h1>`
             document.querySelector('.playAgain').style.display='inline'
@@ -270,7 +270,7 @@ var winner = (board) => {
             play = false
         }
     }
-    console.log('drawc', drawc, 'count', count)
+    //console.log('drawc', drawc, 'count', count)
     if (count == drawc) {
         document.querySelector('.show-winner').innerHTML = `<h1>Draw </h1>`
         document.querySelector('.playAgain').style.display='inline'
@@ -315,11 +315,11 @@ againRl.addEventListener('click', async()=> {
         await show_values(random)
         if (player == 0) {
             count = allData.repeat + 1
-            drawc += 1
             await update_values(random, board, count, true, bool[again++%2], count)
         }
         await show_values(random)
-        console.log('drawc', drawc, 'count', count)
+        drawc += 1
+        //console.log('drawc', drawc, 'count', count)
         //console.log('alldata in again ', allData)
     } else {
         count += ++key_c
