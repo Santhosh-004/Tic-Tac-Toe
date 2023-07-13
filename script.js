@@ -167,7 +167,7 @@ document.querySelector('#playBtn').addEventListener('click', async(event) => {
             done = false
         }
 
-        console.log('count', count, 'drawc', drawc, 'play', play)
+        //console.log('count', count, 'drawc', drawc, 'play', play)
         winner(allData.board)
     }, 500)
 })
@@ -276,10 +276,6 @@ var winner = async(board) => {
                 drawc += 1
                 done = true
             }
-            console.log('here')
-            /* if (player == 1) {
-                await update_values(random, board, count, false, bool[again%2], count)
-            } */
             
         }
     }
