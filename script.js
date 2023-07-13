@@ -26,6 +26,7 @@ const btnEl = document.querySelector('#game-board')
 const againRl = document.querySelector('#again')
 
 let play = true
+let drawc = 9
 let online = false
 let key, key_c = 0, play_c = 1, again = 1
 let player
@@ -270,7 +271,7 @@ var winner = (board) => {
         }
     }
 
-    if (count == 9) {
+    if (count == drawc) {
         document.querySelector('.show-winner').innerHTML = `<h1>Draw </h1>`
         document.querySelector('.playAgain').style.display='inline'
         count = 0
@@ -314,6 +315,7 @@ againRl.addEventListener('click', async()=> {
         await show_values(random)
         if (player == 0) {
             count = allData.repeat + 1
+            drawc += 1
             await update_values(random, board, count, true, bool[again++%2], count)
         }
         await show_values(random)
@@ -321,6 +323,7 @@ againRl.addEventListener('click', async()=> {
     } else {
         count += ++key_c
         play = true
+        drawc += 1
     }
 
     board_render(board)
