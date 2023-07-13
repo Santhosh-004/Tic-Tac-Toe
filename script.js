@@ -139,7 +139,7 @@ document.querySelector('#eIdBtn').addEventListener('click', (event) => {
     player = 1
     play = false
     key = char[++key_c%2]
-    console.log(play, key)
+    //console.log(play, key)
 })
 
 document.querySelector('#playBtn').addEventListener('click', async(event) => {
@@ -262,7 +262,7 @@ var change_val = async(place) => {
 }
 
 var winner = (board) => {
-    if (count > 3) {
+    if (count > drawc) {
         if (check_win(board)) {
             document.querySelector('.show-winner').innerHTML = `<h1>Winner: ${check_win(board)} </h1>`
             document.querySelector('.playAgain').style.display='inline'
@@ -270,7 +270,7 @@ var winner = (board) => {
             play = false
         }
     }
-
+    console.log('drawc', drawc, 'count', count)
     if (count == drawc) {
         document.querySelector('.show-winner').innerHTML = `<h1>Draw </h1>`
         document.querySelector('.playAgain').style.display='inline'
@@ -319,6 +319,7 @@ againRl.addEventListener('click', async()=> {
             await update_values(random, board, count, true, bool[again++%2], count)
         }
         await show_values(random)
+        console.log('drawc', drawc, 'count', count)
         //console.log('alldata in again ', allData)
     } else {
         count += ++key_c
