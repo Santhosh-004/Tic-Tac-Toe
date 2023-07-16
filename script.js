@@ -243,7 +243,6 @@ var change_val = async(place) => {
         board[Math.floor((place.getAttribute('aria-placeholder')-1)/3)][(place.getAttribute('aria-placeholder')-1) % 3] = char[(count-1) % 2]
         //console.log('count', count)
     } else if (check_pos(place) && play && online) {
-        
         place.innerHTML = key
         await show_values(random)
         board = allData.board
@@ -261,6 +260,7 @@ var change_val = async(place) => {
         
     }
     winner(board)
+
 }
 
 var winner = async(board) => {
@@ -276,7 +276,9 @@ var winner = async(board) => {
                 drawc += 1
                 done = true
             }
-            
+            if (!online) {
+                document.querySelector('.playAgain').style.display='inline'
+            }
         }
     }
     //console.log('drawc', drawc, 'count', count)
