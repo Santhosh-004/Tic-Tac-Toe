@@ -293,6 +293,9 @@ var winner = async(board) => {
             drawc += 1
             done = true
         }
+        if (!online) {
+            document.querySelector('.playAgain').style.display='inline'
+        }
     }
 }
 
